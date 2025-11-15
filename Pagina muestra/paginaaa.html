@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMate - Proyectos Informática</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            color: #5a5a5a;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+            cursor: default;
+        }
+        
+        /* Fondo animado pastel con verde pastel corregido */
+        .pastel-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(-45deg, #ffd6e7, #d4f1e3, #ffebcc, #d6eaff);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: floatShape 20s infinite linear;
+            filter: blur(1px);
+        }
+        
+        @keyframes floatShape {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0.8);
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg) scale(1.2);
+            }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .project-section {
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            box-shadow: 0 10px 35px rgba(255, 182, 193, 0.2);
+            text-align: center;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            transition: left 0.8s;
+        }
+        
+        .project-section:hover::before {
+            left: 100%;
+        }
+        
+        .project-section:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(255, 182, 193, 0.4);
+        }
+        
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .project-card {
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 240, 245, 0.9));
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(212, 241, 227, 0.3);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            min-height: 550px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 0.8s ease-out;
+        }
+        
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .project-card:nth-child(even) {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 245, 0.9));
+        }
+        
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+            transition: left 0.8s;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 25px 60px rgba(255, 182, 193, 0.5);
+        }
+        
+        .project-card:hover::before {
+            left: 100%;
+        }
+        
+        /* Encabezados internos */
+        .card-header {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid rgba(255, 182, 193, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .project-info {
+            margin-bottom: 25px;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .project-images {
+            margin-top: auto;
+            animation: slideUp 0.6s ease-out 0.4s both;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* CodeMate con imagen MEJOR POSICIONADA */
+        .codemate-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 240, 245, 0.8));
+            border-left: 6px solid #ffb6c1;
+            animation: sectionGlow 3s infinite alternate;
+            padding: 50px 40px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @keyframes sectionGlow {
+            from {
+                box-shadow: 0 10px 35px rgba(255, 182, 193, 0.3);
+            }
+            to {
+                box-shadow: 0 10px 35px rgba(212, 241, 227, 0.5);
+            }
+        }
+        
+        .codemate-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        
+        .codemate-title-image {
+            width: 600px;
+            height: 180px;
+            object-fit: contain;
+            margin: 0 auto 20px;
+            display: block;
+            filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.15));
+            animation: titleFloat 4s infinite ease-in-out;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes titleFloat {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-8px) scale(1.02);
+            }
+        }
+        
+        .codemate-title-image:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.25));
+        }
+        
+        .codemate-subtitle {
+            font-size: 1.8rem;
+            color: #88c9a1;
+            margin-bottom: 0;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: subtitleFloat 4s infinite ease-in-out;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        @keyframes subtitleFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .codemate-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ffb6c1;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin: 0 0 10px;
+            color: #ff9ebb;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            animation: popIn 0.6s ease-out;
+        }
+        
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .project-subtitle {
+            font-size: 1.1rem;
+            color: #88c9a1;
+            margin-bottom: 15px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        h3 {
+            font-size: 1.1rem;
+            margin: 20px 0 10px;
+            color: #88c9a1;
+            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Inter', sans-serif;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #666;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            line-height: 1.7;
+            animation: textReveal 1s ease-out;
+        }
+        
+        @keyframes textReveal {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .project-card p {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        
+        /* IMÁGENES MEJORADAS */
+        .project-image {
+            width: 220px;
+            height: 160px;
+            object-fit: contain;
+            border-radius: 12px;
+            margin: 15px auto;
+            display: block;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.1));
+            background: transparent;
+            padding: 0;
+            border: none;
+            animation: imageFloat 6s infinite ease-in-out;
+        }
+        
+        @keyframes imageFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-5px) rotate(1deg);
+            }
+            66% {
+                transform: translateY(5px) rotate(-1deg);
+            }
+        }
+        
+        .project-card:hover .project-image {
+            transform: scale(1.15) rotate(2deg);
+            filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.2));
+            animation-play-state: paused;
+        }
+        
+        .company-image {
+            width: 180px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 10px;
+            margin: 10px auto;
+            display: block;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1));
+            background: transparent;
+            padding: 0;
+            border: none;
+            animation: companyPulse 4s infinite ease-in-out;
+        }
+        
+        @keyframes companyPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        .project-card:hover .company-image {
+            transform: scale(1.12) rotate(-1deg);
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+            animation-play-state: paused;
+        }
+        
+        .separator {
+            height: 4px;
+            background: linear-gradient(to right, transparent, #ffb6c1, #a8e6cf, transparent);
+            margin: 25px auto;
+            width: 60%;
+            max-width: 400px;
+            border-radius: 2px;
+            animation: separatorFlow 3s infinite linear;
+        }
+        
+        @keyframes separatorFlow {
+            0% {
+                background-position: -400px 0;
+            }
+            100% {
+                background-position: 400px 0;
+            }
+        }
+        
+        .highlight {
+            font-weight: 700;
+            color: #ff6b95;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            margin: 8px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            animation: highlightFlash 2s infinite;
+        }
+        
+        @keyframes highlightFlash {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+        
+        /* Ajustes para uniformidad */
+        .image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .image-pair {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .project-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+            
+            .project-card {
+                min-height: 520px;
+                padding: 25px;
+            }
+            
+            .project-image {
+                width: 180px;
+                height: 130px;
+            }
+            
+            .company-image {
+                width: 150px;
+                height: 85px;
+            }
+            
+            .codemate-title-image {
+                width: 450px;
+                height: 135px;
+            }
+            
+            .codemate-subtitle {
+                font-size: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 1.7rem;
+            }
+            
+            .codemate-section {
+                padding: 40px 30px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .codemate-title-image {
+                width: 350px;
+                height: 105px;
+            }
+            
+            .codemate-subtitle {
+                font-size: 1.3rem;
+                letter-spacing: 2px;
+            }
+            
+            .codemate-section {
+                padding: 35px 25px 25px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .codemate-title-image {
+                width: 280px;
+                height: 84px;
+            }
+            
+            .codemate-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fondo animado pastel con verde pastel corregido -->
+    <div class="pastel-background"></div>
+    <div class="floating-shapes" id="floatingShapes"></div>
+    
+    <div class="container">
+        <!-- Sección CodeMate con imagen MEJOR POSICIONADA -->
+        <div class="project-section codemate-section">
+            <div class="codemate-header">
+                <img src="codemate.png" alt="CodeMate" class="codemate-title-image">
+                <h2 class="codemate-subtitle">SÉPTIMO INFORMÁTICA</h2>
+            </div>
+            <div class="codemate-content">
+                <p>A lo largo del año, 7° año de Informática llevó a cabo la planificación, desarrollo y presentación de diversos proyectos, abarcando distintas áreas.</p>
+                <p>Cada proyecto implicó la aplicación de conocimientos adquiridos en programación, diseño web, bases de datos y la creatividad, fomentando además el trabajo en equipo, la organización y la solución de problemas.</p>
+            </div>
+        </div>
+        
+        <!-- Proyectos en grid -->
+        <div class="project-grid">
+            <!-- Ahorradin -->
+            <div class="project-card">
+                <div class="card-content">
+                    <div class="card-header">
+                        <h2>Ahorradin</h2>
+                        <div class="project-subtitle">Gestión Financiera Personal</div>
+                    </div>
+                    <div class="project-info">
+                        <p>Aplicación que permite registrar ingresos y gastos, establecer metas de ahorro y generar reportes detallados.</p>
+                    </div>
+                    <div class="project-images">
+                        <div class="image-container">
+                            <img src="Ahorradin.jpeg" alt="Ahorradin" class="project-image">
+                            <div class="image-pair">
+                                <h3>Empresa encargada</h3>
+                                <img src="Vanity.jpeg" alt="Vantiv Productions" class="company-image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Libropedia -->
+            <div class="project-card">
+                <div class="card-content">
+                    <div class="card-header">
+                        <h2>Libropedia</h2>
+                        <div class="project-subtitle">Plataforma Educativa</div>
+                    </div>
+                    <div class="project-info">
+                        <p>Aplicación de gestión financiera personal que permite registrar ingresos y gastos, establecer metas de ahorro.</p>
+                    </div>
+                    <div class="project-images">
+                        <div class="image-container">
+                            <img src="Libropedia.jpeg" alt="Libropedia" class="project-image">
+                            <div class="image-pair">
+                                <h3>Empresa encargada</h3>
+                                <img src="CITRIK.jpg" alt="Citrik Studio" class="company-image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Spaghetti -->
+            <div class="project-card">
+                <div class="card-content">
+                    <div class="card-header">
+                        <h2>Spaghetti</h2>
+                        <div class="project-subtitle">Red Social Digital</div>
+                    </div>
+                    <div class="project-info">
+                        <p>Innovador proyecto que ofrece un espacio digital donde personas mayores de 18 años puedan conectarse y promover sus iniciativas.</p>
+                    </div>
+                    <div class="project-images">
+                        <div class="image-container">
+                            <img src="Spaghetti.jpeg" alt="Spaghetti" class="project-image">
+                            <div class="image-pair">
+                                <h3>Empresa encargada</h3>
+                                <img src="Adobe Express - file.png" alt="Altiora" class="company-image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- LeyendAR -->
+            <div class="project-card">
+                <div class="card-content">
+                    <div class="card-header">
+                        <h2>LeyendAR</h2>
+                        <div class="project-subtitle">Mapa Interactivo Cultural</div>
+                    </div>
+                    <div class="project-info">
+                        <p>Página web educativa de un mapa interactivo de mitos y leyendas tradicionales de la cultura Argentina.</p>
+                    </div>
+                    <div class="project-images">
+                        <div class="image-container">
+                            <img src="LeyendAR.jpeg" alt="LeyendAR" class="project-image">
+                            <div class="image-pair">
+                                <h3>Empresa encargada</h3>
+                                <img src="HistoriAR.jpeg" alt="HistoriAR" class="company-image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- WinBet -->
+            <div class="project-card">
+                <div class="card-content">
+                    <div class="card-header">
+                        <h2>WinBet</h2>
+                        <div class="project-subtitle">Plataforma de Juegos</div>
+                    </div>
+                    <div class="project-info">
+                        <p>Proyecto relacionado con juegos de azar o apuestas, enfocado en la experiencia del usuario y la simulación responsable.</p>
+                    </div>
+                    <div class="project-images">
+                        <div class="image-container">
+                            <img src="Winbet.jpeg" alt="WinBet" class="project-image">
+                            <div class="image-pair">
+                                <h3>Empresa encargada</h3>
+                                <img src="SpinNetworks.jpeg" alt="SpinNetworks" class="company-image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bloom Music -->
+            <div class="project-card">
+                <div class="card-content">
+                    <div class="card-header">
+                        <h2>Bloom Music</h2>
+                        <div class="project-subtitle">Plataforma Musical</div>
+                        <p class="highlight">LIBRACIÓN</p>
+                    </div>
+                    <div class="project-info">
+                        <p>Aplicación o proyecto musical dedicado a la creación, difusión y descubrimiento de música.</p>
+                    </div>
+                    <div class="project-images">
+                        <div class="image-container">
+                            <img src="BloomMusic.png" alt="Bloom Music" class="project-image">
+                            <div class="image-pair">
+                                <h3>Empresa encargada</h3>
+                                <img src="BloomMusic.png" alt="Bloom Music" class="company-image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección NJOY -->
+        <div class="project-section">
+            <div class="card-header">
+                <h2>NJOY</h2>
+                <div class="project-subtitle">Distribución de Videojuegos</div>
+            </div>
+            <p>Plataforma de distribución de videojuegos que ofrece acceso a un catálogo diverso que incluye juegos AAA, retro e indie.</p>
+            <div class="image-container">
+                <img src="NJOY.jpeg" alt="NJOY" class="project-image">
+                <div class="image-pair">
+                    <h3>Empresa encargada</h3>
+                    <img src="Freeticket.jpeg" alt="Freeticket" class="company-image">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Crear formas flotantes animadas
+        function createFloatingShapes() {
+            const container = document.getElementById('floatingShapes');
+            const shapeCount = 20;
+            
+            for (let i = 0; i < shapeCount; i++) {
+                const shape = document.createElement('div');
+                shape.classList.add('shape');
+                
+                // Tamaños variados
+                const size = Math.random() * 100 + 30;
+                shape.style.width = `${size}px`;
+                shape.style.height = `${size}px`;
+                
+                // Posición inicial aleatoria
+                shape.style.left = `${Math.random() * 100}vw`;
+                shape.style.top = `${Math.random() * 100}vh`;
+                
+                // Retraso de animación aleatorio
+                shape.style.animationDelay = `${Math.random() * 20}s`;
+                
+                // Duración de animación aleatoria
+                shape.style.animationDuration = `${Math.random() * 15 + 20}s`;
+                
+                // Colores pastel con verde pastel corregido
+                const colors = [
+                    'rgba(255, 182, 193, 0.4)',
+                    'rgba(212, 241, 227, 0.4)',
+                    'rgba(168, 230, 207, 0.4)',
+                    'rgba(255, 235, 204, 0.4)',
+                    'rgba(214, 234, 255, 0.4)'
+                ];
+                shape.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                container.appendChild(shape);
+            }
+        }
+        
+        // Efecto de entrada escalonada para las tarjetas
+        document.addEventListener('DOMContentLoaded', function() {
+            createFloatingShapes();
+            
+            const cards = document.querySelectorAll('.project-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
